@@ -22,7 +22,7 @@ export function FilterPanel({
 }: FilterPanelProps) {
   return (
     <div className="filter-panel">
-      <h3>Filters</h3>
+      <h3>🔍 Filters</h3>
 
       {/* Author dropdown */}
       <div className="filter-group">

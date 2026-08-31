@@ -30,6 +30,13 @@
   font-size: 1.1rem;
 }
 
+.sidebar {
+  flex: 0 0 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 @media (max-width: 768px) {
   .app-content {
     flex-direction: column;

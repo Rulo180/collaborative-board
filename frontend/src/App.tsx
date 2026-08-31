@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { FilterPanel } from "./components/FilterPanel";
 import { Board } from "./components/Board";
+import { StatisticsPanel, Stats } from "./components/StatisticsPanel";
 import "./App.css";
 
 interface Note {
@@ -17,6 +18,7 @@ function App() {
   const [notesCount, setNotesCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [statistics, setStatistics] = useState<Stats | null>(null);
 
   // Filter state
   const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
@@ -28,6 +30,10 @@ function App() {
   useEffect(() => {
     fetchNotes();
   }, []);
+
+  useEffect(() => {
+    calculateStatistics(filteredNotes);
+  }, [filteredNotes]);
 
   useEffect(() => {
     applyFilters();
@@ -50,6 +56,28 @@ function App() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const calculateStatistics = (filteredNotes: Note[]) => {
+    const stats: Stats = {
+      totalNotes: filteredNotes.length,
+      notesByAuthor: {},
+      notesByColor: {},
+      authors: [],
+      colors: [],
+    };
+
+    filteredNotes.forEach((note) => {
+      stats.notesByAuthor[note.author] =
+        (stats.notesByAuthor[note.author] || 0) + 1;
+      stats.notesByColor[note.color] =
+        (stats.notesByColor[note.color] || 0) + 1;
+    });
+
+    stats.authors = Object.keys(stats.notesByAuthor).sort();
+    stats.colors = Object.keys(stats.notesByColor).sort();
+
+    setStatistics(stats);
   };
 
   const extractFilterOptions = (notesList: Note[]) => {
@@ -92,15 +120,18 @@ function App() {
         <div className="loading">Loading notes...</div>
       ) : (
         <div className="app-content">
-          <FilterPanel
-            authors={authors}
-            colors={colors}
-            selectedAuthor={selectedAuthor}
-            selectedColor={selectedColor}
-            onAuthorChange={setSelectedAuthor}
-            onColorChange={setSelectedColor}
-            onReset={handleReset}
-          />
+          <div className="sidebar">
+            <FilterPanel
+              authors={authors}
+              colors={colors}
+              selectedAuthor={selectedAuthor}
+              selectedColor={selectedColor}
+              onAuthorChange={setSelectedAuthor}
+              onColorChange={setSelectedColor}
+              onReset={handleReset}
+            />
+            {statistics && <StatisticsPanel stats={statistics} />}
+          </div>
           <div className="notes-section">
             <div className="stats">
               Showing <strong>{filteredNotes.length}</strong> of{" "}
