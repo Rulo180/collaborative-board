@@ -1,0 +1,42 @@
+[
+  {
+    "id": "note_1",
+    "text": "Login flow is confusing",
+    "x": 412,
+    "y": 891,
+    "author": "user_7",
+    "color": "yellow"
+  },
+  {
+    "id": "note_2",
+    "text": "Need better error messages",
+    "x": 100,
+    "y": 200,
+    "author": "user_3",
+    "color": "red"
+  },
+  {
+    "id": "note_3",
+    "text": "Mobile responsive design needed",
+    "x": 500,
+    "y": 150,
+    "author": "user_7",
+    "color": "blue"
+  },
+  {
+    "id": "note_4",
+    "text": "Great UX on dashboard",
+    "x": 250,
+    "y": 450,
+    "author": "user_12",
+    "color": "green"
+  },
+  {
+    "id": "note_5",
+    "text": "Consider dark mode",
+    "x": 600,
+    "y": 300,
+    "author": "user_3",
+    "color": "yellow"
+  }
+]
