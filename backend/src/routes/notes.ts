@@ -11,12 +11,11 @@ export function createNotesRouter(notesService: NotesService) {
     });
 
     router.get('/filter', (req: Request, res: Response) => {
-        const { author, color, search } = req.query;
+        const { author, color } = req.query;
 
         const filters = {
             author: author as string | undefined,
             color: color as string | undefined,
-            search: search as string | undefined,
         }
 
         const filteredNotes = notesService.filterNotes(filters);

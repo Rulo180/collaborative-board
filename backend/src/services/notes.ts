@@ -35,7 +35,6 @@ export class NotesService {
     filterNotes(filters: {
         author?: string;
         color?: string;
-        search?: string;
     }): Note[] {
         return this.notes.filter((note) => {
             // Filter by author
@@ -46,14 +45,6 @@ export class NotesService {
             // Filter by color
             if (filters.color && note.color !== filters.color) {
                 return false;
-            }
-
-            // Search by text (case-insensitive)
-            if (filters.search) {
-                const searchLower = filters.search.toLowerCase();
-                if (!note.text.toLowerCase().includes(searchLower)) {
-                    return false;
-                }
             }
 
             return true;
