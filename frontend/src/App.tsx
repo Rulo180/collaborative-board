@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { FilterPanel } from "./components/FilterPanel";
-import './App.css';
+import { Board } from "./components/Board";
+import "./App.css";
 
 interface Note {
   id: string;
@@ -105,24 +106,11 @@ function App() {
               Showing <strong>{filteredNotes.length}</strong> of{" "}
               <strong>{notesCount}</strong> notes
             </div>
-            <div className="notes-grid">
-              {filteredNotes.length === 0 ? (
-                <p className="no-results">No notes match your filters</p>
-              ) : (
-                filteredNotes.map((note) => (
-                  <div
-                    key={note.id}
-                    className="note-card"
-                    style={{ backgroundColor: note.color }}
-                  >
-                    <p className="note-text">{note.text}</p>
-                    <div className="note-meta">
-                      <span className="author">👤 {note.author}</span>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
+            {filteredNotes.length === 0 ? (
+              <p className="no-results">No notes match your filters</p>
+            ) : (
+              <Board notes={filteredNotes} />
+            )}
           </div>
         </div>
       )}
