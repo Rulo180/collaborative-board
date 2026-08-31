@@ -7,7 +7,7 @@ export function createNotesRouter(notesService: NotesService) {
 
     router.get('/', (req: Request, res: Response) => {
         const notes = notesService.getAllNotes();
-        res.json(notes);
+        res.json({ notes, count: notes.length });
     });
 
     router.get('/filter', (req: Request, res: Response) => {
@@ -20,7 +20,7 @@ export function createNotesRouter(notesService: NotesService) {
         }
 
         const filteredNotes = notesService.filterNotes(filters);
-        res.json(filteredNotes);
+        res.json({ notes: filteredNotes, count: filteredNotes.length });
     });
 
     return router;
