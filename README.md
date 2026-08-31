@@ -56,6 +56,7 @@ The frontend will automatically open in your browser.
 
 ## Project Structure
 
+```
 collaborative-board/
 ├── backend/
 │   ├── src/
@@ -81,18 +82,23 @@ collaborative-board/
 ├── data/
 │   └── notes.json                # Sample notes data
 └── README.md
+```
 
 ## API Endpoints
 
 ### Get All Notes
 
+```bash
 GET /api/notes
+```
 
 Returns all notes with count.
 
 ### Filter Notes
 
+```bash
 GET /api/notes/filter?author=user_7&color=yellow
+```
 
 Query parameters:
 
