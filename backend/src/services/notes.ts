@@ -31,4 +31,32 @@ export class NotesService {
     getAllNotes(): Note[] {
         return this.notes;
     }
+
+    filterNotes(filters: {
+        author?: string;
+        color?: string;
+        search?: string;
+    }): Note[] {
+        return this.notes.filter((note) => {
+            // Filter by author
+            if (filters.author && note.author !== filters.author) {
+                return false;
+            }
+
+            // Filter by color
+            if (filters.color && note.color !== filters.color) {
+                return false;
+            }
+
+            // Search by text (case-insensitive)
+            if (filters.search) {
+                const searchLower = filters.search.toLowerCase();
+                if (!note.text.toLowerCase().includes(searchLower)) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+    }
 }
