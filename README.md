@@ -2,6 +2,9 @@
 
 A full-stack application for exploring and analyzing activity on a collaborative board. Load sticky notes from JSON, filter by author and color, view spatial positioning, and analyze statistics.
 
+<img width="1615" height="934" alt="image" src="https://github.com/user-attachments/assets/db1986be-e99d-4429-ad04-c2e6c9d8b6e2" />
+
+
 ## Tech Stack
 
 - **Frontend**: React 18 + TypeScript + Vite
