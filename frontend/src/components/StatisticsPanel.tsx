@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./StatisticsPanel.css";
+import { getColorLabel } from "../constants/colors";
 
 export type Stats = {
   totalNotes: number;
@@ -63,7 +64,7 @@ export function StatisticsPanel({ stats }: StatisticsPanelProps) {
                   className="color-dot"
                   style={{ backgroundColor: color }}
                 ></span>
-                {color}
+                {getColorLabel(color)}
               </span>
               <span className="stat-count">{stats.notesByColor[color]}</span>
             </li>

@@ -1,5 +1,6 @@
 import React from "react";
 import './FilterPanel.css';
+import { getColorLabel } from '../constants/colors';
 
 interface FilterPanelProps {
   authors: string[];
@@ -52,7 +53,7 @@ export function FilterPanel({
           <option value="">All colors</option>
           {colors.map((color) => (
             <option key={color} value={color}>
-              {color}
+              {getColorLabel(color)}
             </option>
           ))}
         </select>

@@ -4,39 +4,63 @@
     "text": "Login flow is confusing",
     "x": 412,
     "y": 891,
-    "author": "user_7",
-    "color": "yellow"
+    "author": "Martin",
+    "color": "#FFEDB9"
   },
   {
     "id": "note_2",
     "text": "Need better error messages",
     "x": 100,
     "y": 200,
-    "author": "user_3",
-    "color": "red"
+    "author": "Emilia",
+    "color": "#DF301C"
   },
   {
     "id": "note_3",
     "text": "Mobile responsive design needed",
     "x": 500,
     "y": 150,
-    "author": "user_7",
-    "color": "blue"
+    "author": "Martin",
+    "color": "#2BBBD7"
   },
   {
     "id": "note_4",
     "text": "Great UX on dashboard",
     "x": 250,
     "y": 450,
-    "author": "user_12",
-    "color": "green"
+    "author": "Florencia",
+    "color": "#76C457"
   },
   {
     "id": "note_5",
     "text": "Consider dark mode",
     "x": 600,
     "y": 300,
-    "author": "user_3",
-    "color": "yellow"
+    "author": "Emilia",
+    "color": "#FFEDB9"
+  },
+  {
+    "id": "note_6",
+    "text": "Add tooltips for icons",
+    "x": 350,
+    "y": 600,
+    "author": "Martin",
+    "color": "#DF301C"
+  },
+  {
+    "id": "note_7",
+    "text": "Improve loading speed",
+    "x": 700,
+    "y": 500,
+    "author": "Florencia",
+    "color": "#2BBBD7"
+  },
+  {
+    "id": "note_8",
+    "text": "Add user profile customization",
+    "x": 220,
+    "y": 400,
+    "author": "Emilia",
+    "color": "#76C457"
   }
 ]
