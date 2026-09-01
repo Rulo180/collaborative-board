@@ -6,20 +6,18 @@ export function createNotesRouter(notesService: NotesService) {
     const router = Router();
 
     router.get('/', (req: Request, res: Response) => {
-        const notes = notesService.getAllNotes();
-        res.json({ notes, count: notes.length });
-    });
-
-    router.get('/filter', (req: Request, res: Response) => {
         const { author, color } = req.query;
 
-        const filters = {
-            author: author as string | undefined,
-            color: color as string | undefined,
-        }
+        const result = notesService.filterNotes({
+            author: typeof author === 'string' ? author : undefined,
+            color: typeof color === 'string' ? color : undefined,
+        });
 
-        const filteredNotes = notesService.filterNotes(filters);
-        res.json({ notes: filteredNotes, count: filteredNotes.length });
+        res.json({
+            notes: result.notes,
+            count: result.notes.length,
+            total: result.total,
+        });
     });
 
     return router;

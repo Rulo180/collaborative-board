@@ -10,6 +10,16 @@ export interface Note {
     color: string;
 }
 
+export interface NotesFilters {
+    author?: string;
+    color?: string;
+}
+
+export interface FilteredNotesResult {
+    notes: Note[];
+    total: number;
+}
+
 export class NotesService {
     private notes: Note[] = [];
 
@@ -32,11 +42,8 @@ export class NotesService {
         return this.notes;
     }
 
-    filterNotes(filters: {
-        author?: string;
-        color?: string;
-    }): Note[] {
-        return this.notes.filter((note) => {
+    filterNotes(filters: NotesFilters): FilteredNotesResult {
+        let filtered = this.notes.filter((note) => {
             // Filter by author
             if (filters.author && note.author !== filters.author) {
                 return false;
@@ -49,5 +56,10 @@ export class NotesService {
 
             return true;
         });
+
+        return {
+            notes: filtered,
+            total: filtered.length,
+        };
     }
 }

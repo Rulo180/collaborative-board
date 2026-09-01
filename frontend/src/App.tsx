@@ -17,6 +17,7 @@ function App() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [notesCount, setNotesCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+  const [filterLoading, setFilterLoading] = useState(false);
   const [error, setError] = useState("");
   const [statistics, setStatistics] = useState<Stats | null>(null);
 
@@ -36,25 +37,73 @@ function App() {
   }, [filteredNotes]);
 
   useEffect(() => {
-    applyFilters();
-  }, [selectedAuthor, selectedColor, notes]);
+    const controller = new AbortController();
+    fetchFilteredNotes(selectedAuthor, selectedColor, controller.signal);
+
+    return () => controller.abort();
+  }, [selectedAuthor, selectedColor]);
 
   const fetchNotes = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5001/api/notes");
+      setError("");
+
+      const response = await fetch("/api/notes");
+      if (!response.ok) {
+        throw new Error("Failed to fetch notes");
+      }
+
       const data = await response.json();
-      const notes = data.notes || [];
-      setNotes(notes);
-      setNotesCount(data.count || 0);
-      setFilteredNotes(notes);
-      extractFilterOptions(notes);
+      const allNotes = data.notes || [];
+
+      setNotes(allNotes);
+      extractFilterOptions(allNotes);
     } catch (err) {
       setError(`Failed to load notes: ${err}`);
       setNotes([]);
-      setNotesCount(0);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchFilteredNotes = async (
+    author?: string,
+    color?: string,
+    signal?: AbortSignal
+  ) => {
+    try {
+      setFilterLoading(true);
+      setError("");
+
+      const params = new URLSearchParams();
+      if (author) {
+        params.set("author", author);
+      }
+      if (color) {
+        params.set("color", color);
+      }
+
+      const query = params.toString();
+      const url = query ? `/api/notes?${query}` : "/api/notes";
+
+      const response = await fetch(url, { signal });
+      if (!response.ok) {
+        throw new Error("Failed to fetch filtered notes");
+      }
+
+      const data = await response.json();
+      setFilteredNotes(data.notes || []);
+      setNotesCount(data.total ?? data.count ?? 0);
+    } catch (err) {
+      if ((err as Error).name === "AbortError") {
+        return;
+      }
+
+      setError(`Failed to apply filters: ${err}`);
+      setFilteredNotes([]);
+      setNotesCount(0);
+    } finally {
+      setFilterLoading(false);
     }
   };
 
@@ -87,24 +136,9 @@ function App() {
     setColors(uniqueColors);
   };
 
-  const applyFilters = () => {
-    let filtered = notes;
-
-    if (selectedAuthor) {
-      filtered = filtered.filter((note) => note.author === selectedAuthor);
-    }
-
-    if (selectedColor) {
-      filtered = filtered.filter((note) => note.color === selectedColor);
-    }
-
-    setFilteredNotes(filtered);
-  };
-
   const handleReset = () => {
     setSelectedAuthor(undefined);
     setSelectedColor(undefined);
-    setFilteredNotes(notes);
   };
 
   return (
@@ -137,6 +171,7 @@ function App() {
               Showing <strong>{filteredNotes.length}</strong> of{" "}
               <strong>{notesCount}</strong> notes
             </div>
+            {filterLoading && <div className="loading">Updating results...</div>}
             {filteredNotes.length === 0 ? (
               <p className="no-results">No notes match your filters</p>
             ) : (
