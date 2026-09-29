@@ -1,22 +1,26 @@
-import express from 'express';
 import request from 'supertest';
 import path from 'path';
 import { describe, expect, it } from 'vitest';
-import { createNotesRouter } from '../src/routes/notes';
+import { createApp } from '../src/app';
 import { NotesService } from '../src/services/notes';
 
 describe('GET /api/notes', () => {
   const dataPath = path.join(process.cwd(), '../data/notes.json');
 
   const buildApp = () => {
-    const app = express();
     const service = new NotesService(dataPath);
 
-    app.use(express.json());
-    app.use('/api/notes', createNotesRouter(service));
-
-    return app;
+    return createApp(service);
   };
+
+  it('returns health status', async () => {
+    const app = buildApp();
+
+    const response = await request(app).get('/health');
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ status: 'ok' });
+  });
 
   it('returns all notes with count and total', async () => {
     const app = buildApp();
