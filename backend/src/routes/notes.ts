@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { NotesService } from "../services/notes";
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
+import { BadRequestError } from "../errors";
 
 type NotesQuery = {
     author?: string;
@@ -11,6 +12,7 @@ function validateNotesQuery(query: Request['query']): { filters?: NotesQuery; er
     const errors: string[] = [];
     const hexColorPattern = /^#[0-9A-Fa-f]{6}$/;
 
+    // Reuse the same parser for both filters to keep validation behavior consistent.
     const parseTextFilter = (value: unknown, key: 'author' | 'color') => {
         if (value === undefined) {
             return undefined;
@@ -54,22 +56,23 @@ function validateNotesQuery(query: Request['query']): { filters?: NotesQuery; er
 export function createNotesRouter(notesService: NotesService) {
     const router = Router();
 
-    router.get('/', (req: Request, res: Response) => {
+    router.get('/', (req: Request, res: Response, next: NextFunction) => {
         const validation = validateNotesQuery(req.query);
 
         if (validation.errors.length > 0 || !validation.filters) {
-            return res.status(400).json({
-                error: 'Invalid query parameters',
-                details: validation.errors,
-            });
+            next(new BadRequestError('Invalid query parameters', validation.errors));
+            return;
         }
 
         const result = notesService.filterNotes(validation.filters);
 
+        // Keep legacy fields for compatibility while exposing clearer counter names.
         res.json({
             notes: result.notes,
             count: result.notes.length,
             total: result.total,
+            filteredCount: result.notes.length,
+            totalCount: notesService.getAllNotes().length,
         });
     });
 
