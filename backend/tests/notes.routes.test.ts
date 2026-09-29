@@ -10,7 +10,7 @@ describe('GET /api/notes', () => {
   const buildApp = () => {
     const service = new NotesService(dataPath);
 
-    return createApp(service);
+    return createApp({ notesService: service });
   };
 
   it('returns health status', async () => {
@@ -32,6 +32,8 @@ describe('GET /api/notes', () => {
     expect(response.body.notes).toHaveLength(8);
     expect(response.body.count).toBe(8);
     expect(response.body.total).toBe(8);
+    expect(response.body.filteredCount).toBe(8);
+    expect(response.body.totalCount).toBe(8);
   });
 
   it('filters by author query parameter', async () => {
@@ -66,6 +68,8 @@ describe('GET /api/notes', () => {
     expect(response.body.notes[0].id).toBe('note_4');
     expect(response.body.count).toBe(1);
     expect(response.body.total).toBe(1);
+    expect(response.body.filteredCount).toBe(1);
+    expect(response.body.totalCount).toBe(8);
   });
 
   it('returns 400 when author is not a string', async () => {
@@ -76,6 +80,7 @@ describe('GET /api/notes', () => {
     expect(response.status).toBe(400);
     expect(response.body.error).toBe('Invalid query parameters');
     expect(response.body.details).toContain('author must be a string');
+    expect(response.body.requestId).toBeTypeOf('string');
   });
 
   it('returns 400 when color is not a valid hex code', async () => {
@@ -96,5 +101,26 @@ describe('GET /api/notes', () => {
     expect(response.status).toBe(400);
     expect(response.body.error).toBe('Invalid query parameters');
     expect(response.body.details).toContain('author cannot be empty');
+  });
+
+  it('sets x-request-id header on responses', async () => {
+    const app = buildApp();
+
+    const response = await request(app).get('/api/notes');
+
+    expect(response.status).toBe(200);
+    expect(response.headers['x-request-id']).toBeTypeOf('string');
+  });
+
+  it('returns metrics in prometheus text format', async () => {
+    const app = buildApp();
+
+    await request(app).get('/api/notes');
+    const response = await request(app).get('/metrics');
+
+    expect(response.status).toBe(200);
+    expect(response.headers['content-type']).toContain('text/plain');
+    expect(response.text).toContain('http_requests_total');
+    expect(response.text).toContain('http_requests_by_signature');
   });
 });
