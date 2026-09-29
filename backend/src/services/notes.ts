@@ -1,5 +1,4 @@
 import * as fs from 'fs';
-import * as path from 'path';
 
 export interface Note {
     id: string;
@@ -20,6 +19,27 @@ export interface FilteredNotesResult {
     total: number;
 }
 
+function isNote(value: unknown): value is Note {
+    if (!value || typeof value !== 'object') {
+        return false;
+    }
+
+    const candidate = value as Record<string, unknown>;
+    const hexColorPattern = /^#[0-9A-Fa-f]{6}$/;
+
+    return (
+        typeof candidate.id === 'string' &&
+        typeof candidate.text === 'string' &&
+        typeof candidate.x === 'number' &&
+        Number.isFinite(candidate.x) &&
+        typeof candidate.y === 'number' &&
+        Number.isFinite(candidate.y) &&
+        typeof candidate.author === 'string' &&
+        typeof candidate.color === 'string' &&
+        hexColorPattern.test(candidate.color)
+    );
+}
+
 export class NotesService {
     private notes: Note[] = [];
 
@@ -30,7 +50,19 @@ export class NotesService {
     private loadNotes(dataPath: string): void {
         try {
             const data = fs.readFileSync(dataPath, 'utf-8');
-            this.notes = JSON.parse(data);
+            const parsed = JSON.parse(data) as unknown;
+
+            if (!Array.isArray(parsed)) {
+                throw new Error('Notes data must be an array');
+            }
+
+            const hasInvalidNote = parsed.some((note) => !isNote(note));
+
+            if (hasInvalidNote) {
+                throw new Error('Notes data contains invalid note entries');
+            }
+
+            this.notes = parsed;
             console.log(`✅ Loaded ${this.notes.length} notes`);
         } catch (error) {
             console.error(`❌ Failed to load notes: ${error}`);

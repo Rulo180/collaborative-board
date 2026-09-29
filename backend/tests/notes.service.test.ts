@@ -1,4 +1,6 @@
 import path from 'path';
+import fs from 'fs';
+import os from 'os';
 import { describe, expect, it } from 'vitest';
 import { NotesService } from '../src/services/notes';
 
@@ -40,5 +42,40 @@ describe('NotesService', () => {
     expect(result.total).toBe(1);
     expect(result.notes).toHaveLength(1);
     expect(result.notes[0].id).toBe('note_1');
+  });
+
+  it('returns empty notes when JSON content is invalid', () => {
+    const tempFilePath = path.join(os.tmpdir(), `invalid-json-${Date.now()}.json`);
+    fs.writeFileSync(tempFilePath, '{not-valid-json', 'utf-8');
+
+    const service = new NotesService(tempFilePath);
+
+    expect(service.getAllNotes()).toHaveLength(0);
+
+    fs.unlinkSync(tempFilePath);
+  });
+
+  it('returns empty notes when notes schema is invalid', () => {
+    const tempFilePath = path.join(os.tmpdir(), `invalid-schema-${Date.now()}.json`);
+    fs.writeFileSync(
+      tempFilePath,
+      JSON.stringify([
+        {
+          id: 'broken-note',
+          text: 'missing valid color and numeric coordinates',
+          x: '100',
+          y: null,
+          author: 'tester',
+          color: 'yellow',
+        },
+      ]),
+      'utf-8',
+    );
+
+    const service = new NotesService(tempFilePath);
+
+    expect(service.getAllNotes()).toHaveLength(0);
+
+    fs.unlinkSync(tempFilePath);
   });
 });

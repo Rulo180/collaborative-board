@@ -67,4 +67,34 @@ describe('GET /api/notes', () => {
     expect(response.body.count).toBe(1);
     expect(response.body.total).toBe(1);
   });
+
+  it('returns 400 when author is not a string', async () => {
+    const app = buildApp();
+
+    const response = await request(app).get('/api/notes?author=Martin&author=Emilia');
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe('Invalid query parameters');
+    expect(response.body.details).toContain('author must be a string');
+  });
+
+  it('returns 400 when color is not a valid hex code', async () => {
+    const app = buildApp();
+
+    const response = await request(app).get('/api/notes').query({ color: 'yellow' });
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe('Invalid query parameters');
+    expect(response.body.details).toContain('color must be a valid hex value like #FFEDB9');
+  });
+
+  it('returns 400 when author is empty', async () => {
+    const app = buildApp();
+
+    const response = await request(app).get('/api/notes').query({ author: '   ' });
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe('Invalid query parameters');
+    expect(response.body.details).toContain('author cannot be empty');
+  });
 });
